@@ -58,7 +58,8 @@ type Game struct {
 
 	paused bool
 
-	nextID int
+	bgTexture r.Texture2D
+	nextID    int
 }
 
 func (g *Game) pauseGame() {
@@ -88,6 +89,10 @@ func main() {
 	game.Init()
 
 	r.InitWindow(game.screenWidth, game.screenHeight, "Going Deeper")
+
+	noise := r.GenImageWhiteNoise(2000, 2000, .8)
+
+	game.bgTexture = r.LoadTextureFromImage(noise)
 
 	r.SetTargetFPS(60)
 
@@ -149,10 +154,10 @@ func (g *Game) Update() {
 	if r.IsKeyDown(r.KeyA) && g.camera.Target.X > 300 {
 		g.camera.Target.X -= float32(g.cameraSpeed) / g.camera.Zoom
 	}
-	if r.IsKeyDown(r.KeyS) && g.camera.Target.Y < 1000 {
+	if r.IsKeyDown(r.KeyS) && g.camera.Target.Y < 5000 {
 		g.camera.Target.Y += float32(g.cameraSpeed) / g.camera.Zoom
 	}
-	if r.IsKeyDown(r.KeyD) && g.camera.Target.X < 1000 {
+	if r.IsKeyDown(r.KeyD) && g.camera.Target.X < 2000 {
 		g.camera.Target.X += float32(g.cameraSpeed) / g.camera.Zoom
 	}
 
@@ -172,6 +177,10 @@ func (g *Game) Draw() {
 
 		r.BeginMode2D(g.camera)
 		{
+			r.DrawTexture(g.bgTexture, -1000, -600, r.NewColor(0, 100, 100, 255))
+			r.DrawTexture(g.bgTexture, 1000, -600, r.NewColor(0, 100, 100, 255))
+			r.DrawTexture(g.bgTexture, 1000, 1400, r.NewColor(0, 100, 100, 255))
+			r.DrawRectangleGradientV(-1000, -600, 7000, 10000, r.NewColor(0, 140, 255, 245), r.NewColor(0, 0, 10, 245))
 			r.DrawText("Hello World!", 240, 180, 48, r.DarkGray)
 			for i := 0; i < len(g.worldButtons); i++ {
 				r.DrawRectangleRec(g.worldButtons[i].rect, r.SkyBlue)
