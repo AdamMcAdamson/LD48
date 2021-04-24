@@ -67,7 +67,7 @@ func (g *Game) pauseGame() {
 
 func (g *Game) ManageInput() {
 	if r.IsMouseButtonPressed(r.MouseLeftButton) {
-		var pos r.Vector2 = r.GetScreenToWorld2D(r.NewVector2(float32(r.GetMouseX()), float32(r.GetMouseY())), g.camera)
+		var pos r.Vector2 = r.GetScreenToWorld2D(r.GetMousePosition(), g.camera)
 
 		for i := 0; i < len(g.worldButtons); i++ {
 			if (int32(pos.X) <= g.worldButtons[i].rect.ToInt32().X+g.worldButtons[i].rect.ToInt32().Width && int32(pos.X) >= g.worldButtons[i].rect.ToInt32().X) &&
@@ -96,13 +96,14 @@ func main() {
 
 		game.Draw()
 	}
+
 	r.CloseWindow()
 }
 
 // Init - Initialize game
 func (g *Game) Init() {
-	g.screenWidth = 800
-	g.screenHeight = 450
+	g.screenWidth = 1280
+	g.screenHeight = 720
 
 	g.camera.Target = r.NewVector2(300, 200)
 	g.camera.Offset = r.NewVector2(float32(g.screenWidth)/2, float32(g.screenHeight)/2)
@@ -124,6 +125,7 @@ func (g *Game) Init() {
 
 	g.buttonRelations[button.id] = g.pauseGame
 	g.worldButtons = append(g.worldButtons, button)
+
 }
 
 // Update - Update game
