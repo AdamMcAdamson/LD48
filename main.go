@@ -49,6 +49,8 @@ type Game struct {
 
 	camera r.Camera2D
 
+	cameraSpeed int32
+
 	worldButtons  []Button
 	screenButtons []Button
 
@@ -105,7 +107,7 @@ func (g *Game) Init() {
 	g.camera.Target = r.NewVector2(300, 200)
 	g.camera.Offset = r.NewVector2(float32(g.screenWidth)/2, float32(g.screenHeight)/2)
 	g.camera.Rotation = 0
-	g.camera.Zoom = 1
+	g.camera.Zoom = .8
 
 	g.buttonRelations = make(map[int]func())
 
@@ -132,11 +134,31 @@ func (g *Game) Update() {
 	if r.IsKeyPressed(r.KeyP) {
 		g.paused = false
 	}
+
+	if r.IsKeyDown(r.KeyLeftShift) {
+		g.cameraSpeed = 10
+	} else {
+		g.cameraSpeed = 4
+	}
+
+	if r.IsKeyDown(r.KeyW) && g.camera.Target.Y > 200 {
+		g.camera.Target.Y -= float32(g.cameraSpeed) / g.camera.Zoom
+	}
+	if r.IsKeyDown(r.KeyA) && g.camera.Target.X > 300 {
+		g.camera.Target.X -= float32(g.cameraSpeed) / g.camera.Zoom
+	}
+	if r.IsKeyDown(r.KeyS) && g.camera.Target.Y < 1000 {
+		g.camera.Target.Y += float32(g.cameraSpeed) / g.camera.Zoom
+	}
+	if r.IsKeyDown(r.KeyD) && g.camera.Target.X < 1000 {
+		g.camera.Target.X += float32(g.cameraSpeed) / g.camera.Zoom
+	}
+
 	g.camera.Zoom += float32(r.GetMouseWheelMove()) * 0.05
-	if g.camera.Zoom > 3 {
-		g.camera.Zoom = 3
-	} else if g.camera.Zoom < 1 {
-		g.camera.Zoom = 1
+	if g.camera.Zoom > 2 {
+		g.camera.Zoom = 2
+	} else if g.camera.Zoom < 0.5 {
+		g.camera.Zoom = 0.5
 	}
 }
 
@@ -160,6 +182,8 @@ func (g *Game) Draw() {
 			r.DrawRectangle(g.screenWidth/2-r.MeasureText("GAME PAUSED", 40)/2-50, g.screenHeight/2-60, r.MeasureText("GAME PAUSED", 40)+100, 60, r.LightGray)
 			r.DrawText("GAME PAUSED", g.screenWidth/2-r.MeasureText("GAME PAUSED", 40)/2, g.screenHeight/2-40, 40, r.Gray)
 		}
+
+		r.DrawFPS(20, 10)
 
 	}
 	r.EndDrawing()
