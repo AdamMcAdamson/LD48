@@ -47,7 +47,10 @@ type Game struct {
 	screenWidth  int32
 	screenHeight int32
 
-	onScreenButtons []Button
+	camera r.Camera2D
+
+	worldButtons  []Button
+	screenButtons []Button
 
 	buttonRelations map[int]func()
 
@@ -62,13 +65,12 @@ func (g *Game) pauseGame() {
 
 func (g *Game) ManageInput() {
 	if r.IsMouseButtonPressed(r.MouseLeftButton) {
-		x := r.GetMouseX()
-		y := r.GetMouseY()
+		var pos r.Vector2 = r.GetScreenToWorld2D(r.NewVector2(float32(r.GetMouseX()), float32(r.GetMouseY())), g.camera)
 
-		for i := 0; i < len(g.onScreenButtons); i++ {
-			if (x <= g.onScreenButtons[i].rect.ToInt32().X+g.onScreenButtons[i].rect.ToInt32().Width && x >= g.onScreenButtons[i].rect.ToInt32().X) &&
-				(y <= g.onScreenButtons[i].rect.ToInt32().Y+g.onScreenButtons[i].rect.ToInt32().Height && y >= g.onScreenButtons[i].rect.ToInt32().Y) {
-				g.ButtonPressed(g.onScreenButtons[i].id)
+		for i := 0; i < len(g.worldButtons); i++ {
+			if (int32(pos.X) <= g.worldButtons[i].rect.ToInt32().X+g.worldButtons[i].rect.ToInt32().Width && int32(pos.X) >= g.worldButtons[i].rect.ToInt32().X) &&
+				(int32(pos.Y) <= g.worldButtons[i].rect.ToInt32().Y+g.worldButtons[i].rect.ToInt32().Height && int32(pos.Y) >= g.worldButtons[i].rect.ToInt32().Y) {
+				g.ButtonPressed(g.worldButtons[i].id)
 			}
 		}
 	}
@@ -83,7 +85,7 @@ func main() {
 	game := Game{}
 	game.Init()
 
-	r.InitWindow(game.screenWidth, game.screenHeight, "Walking-Game")
+	r.InitWindow(game.screenWidth, game.screenHeight, "Going Deeper")
 
 	r.SetTargetFPS(60)
 
@@ -100,6 +102,11 @@ func (g *Game) Init() {
 	g.screenWidth = 800
 	g.screenHeight = 450
 
+	g.camera.Target = r.NewVector2(300, 200)
+	g.camera.Offset = r.NewVector2(float32(g.screenWidth)/2, float32(g.screenHeight)/2)
+	g.camera.Rotation = 0
+	g.camera.Zoom = 1
+
 	g.buttonRelations = make(map[int]func())
 
 	g.nextID = 1
@@ -114,7 +121,7 @@ func (g *Game) Init() {
 	button.pressed = false
 
 	g.buttonRelations[button.id] = g.pauseGame
-	g.onScreenButtons = append(g.onScreenButtons, button)
+	g.worldButtons = append(g.worldButtons, button)
 }
 
 // Update - Update game
@@ -125,26 +132,35 @@ func (g *Game) Update() {
 	if r.IsKeyPressed(r.KeyP) {
 		g.paused = false
 	}
-
+	g.camera.Zoom += float32(r.GetMouseWheelMove()) * 0.05
+	if g.camera.Zoom > 3 {
+		g.camera.Zoom = 3
+	} else if g.camera.Zoom < 1 {
+		g.camera.Zoom = 1
+	}
 }
 
 // Draw - Draw game
 func (g *Game) Draw() {
 	r.BeginDrawing()
+	{
+		r.ClearBackground(r.RayWhite)
 
-	r.ClearBackground(r.RayWhite)
+		r.BeginMode2D(g.camera)
+		{
+			r.DrawText("Hello World!", 240, 180, 48, r.DarkGray)
+			for i := 0; i < len(g.worldButtons); i++ {
+				r.DrawRectangleRec(g.worldButtons[i].rect, r.SkyBlue)
+				r.DrawTextRec(r.GetFontDefault(), g.worldButtons[i].text, g.worldButtons[i].rect, 20, 5, false, r.DarkGray)
+			}
+		}
+		r.EndMode2D()
 
-	r.DrawText("Hello World!", 240, 180, 48, r.DarkGray)
+		if g.paused {
+			r.DrawRectangle(g.screenWidth/2-r.MeasureText("GAME PAUSED", 40)/2-50, g.screenHeight/2-60, r.MeasureText("GAME PAUSED", 40)+100, 60, r.LightGray)
+			r.DrawText("GAME PAUSED", g.screenWidth/2-r.MeasureText("GAME PAUSED", 40)/2, g.screenHeight/2-40, 40, r.Gray)
+		}
 
-	for i := 0; i < len(g.onScreenButtons); i++ {
-		r.DrawRectangleRec(g.onScreenButtons[i].rect, r.SkyBlue)
-		r.DrawTextRec(r.GetFontDefault(), g.onScreenButtons[i].text, g.onScreenButtons[i].rect, 20, 5, false, r.DarkGray)
 	}
-
-	if g.paused {
-		r.DrawRectangle(g.screenWidth/2-r.MeasureText("GAME PAUSED", 40)/2-50, g.screenHeight/2-60, r.MeasureText("GAME PAUSED", 40)+100, 60, r.LightGray)
-		r.DrawText("GAME PAUSED", g.screenWidth/2-r.MeasureText("GAME PAUSED", 40)/2, g.screenHeight/2-40, 40, r.Gray)
-	}
-
 	r.EndDrawing()
 }
