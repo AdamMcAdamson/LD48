@@ -1,0 +1,61 @@
+LD48: Deeper and Deeper
+
+
+BoI Deeper
+
+Diving
+
+Mining
+
+
+----------
+Sun disappeared survive with the remaining heat on earth. Reach Geothermal heating and energy.
+Build Facilities towards the bottom of the ocean.
+
+2D Basebuilding resource management game.
+
+High level mechanics:
+Research
+All resources are limited.
+Energy is main resource, generated with body heat (eating fish), coal from surface, oil from oil drills (once deep enough). 
+Scouting parties on the surface collect materials which get harder and harder as temp drops.
+Diving vessels to gather resources harder and harder as pressure increases.
+Building down for progress, wide for space.
+Depth required for certain research.
+Mining operations(? if builing along trench)
+
+Research
+Requires: Relevant Resources, Depth, Energy, People, Time, Building/Room
+More people = faster
+Labs can do research at their given depth. Maybe: Certain research must have room touching the water (pressure tests)
+
+People
+Found on expeditions, Birth, (?incubation (research)) 
+Assigned Jobs as available automatically
+
+Materials:
+Building - Iron, Steel, Carbonsteel, 505L Steel Alloy, Superplastics
+
+Resources - Heat, Batteries, Energy, Coal, Fish, Fresh water, Oil
+
+Jobs: 
+Builder - Expands the Base
+Manufacturer - Builds gear, walls, refines materials.
+Operator - Runs buildings (heat, water cleaner, )
+Adventurer - Goes on land/sea expeditions
+Scientist - Does research
+Caregiver - Raises children
+
+Builders - Requires scuba gear/reinforced gear/submarine and arc welder/Energy beam welder (faster), and materials (? walls)
+Manufacturer - Requires Materials/Resources and building to work
+Operator - Resources and building to work
+Adventurer - Heater, Batteries, Clothing, Fish
+Scientist - Building to do work (and research materials/resources)
+Caregiver - Building to work (uses fish, fresh water)
+
+
+Buildings:
+Designate room as type of builing, Needs to get built (redesignation requires destuction and building)
+Only mining outpost against the ground
+Ladders go anywhere
+
